@@ -1,13 +1,8 @@
 #include <iostream>
-
-int getInteger(){
-    std :: cout << "Introduzca un numero: ";
-    int x {};
-    std :: cin >> x;
-    return 0;
-}
+#include "input.hpp"
 
 int main(){
+    using namespace calculos;
     int x{getInteger()};
     int y{getInteger()};
     std::cout << x << " + " << y << " is " << x + y << "\n";
