@@ -7,7 +7,9 @@
 			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
 			"args": [
 				"-g",
-				"${file}",
+				"${fileDirname}\\**.cpp",
+				//"${file}",
+				//"${workspaceFolder}\\io.cpp", //maybe quitar idontknow
 				"-o",
 				"${fileDirname}\\${fileBasenameNoExtension}.exe"
 			],
