@@ -2,15 +2,20 @@
 #include <cstring>
 using std::string;
 
+// Daba error con el vector movimientos,  que habian 556 transacciones
+// pero al imprimir se imprimian hasta 32 transacciones aunque solo es un vector
+// de 30, pasé el mismo codigo a otra máquina y lo probé en codeblocks y estaba todo
+// bien. Cambié el vector por una string normal y le hice cambio de linea.
+// Codigo en la carpeta error probar
+
 //Estructura de datos para guardar los datos de la tarjeta
 struct datos{
     string noTarjeta;
     string nip;
     double saldo;
-    string movimientos;
+    //string movimientos[30] 
+    string movimientos = "";
 }tarjeta[3]; // Creo un vector tipo tarjeta
-
-int transf[3] = {0, 0, 0};
 
 //Llenado de datos de las tarjetas
 int llenar(){
@@ -46,6 +51,7 @@ bool validarNip(string nip, int i){ //Int i es el idTarjeta
         return false;
     }  
 }
+
 //Convertir una cadena a mayusculas
 string aMayuscula(string cadena) {
     for (int i = 0; i < cadena.length(); i++){
@@ -60,8 +66,7 @@ int retirar(int idTarjeta){
     double retiro{};
     std::cin >> retiro;
     tarjeta[idTarjeta].saldo -= retiro; //Se resta al saldo el retiro de dinero
-    //transf[idTarjeta] += 1;
-    tarjeta[idTarjeta].movimientos += "Retiro de $" + std::to_string(retiro) + "\n";
+   //tarjeta[idTarjeta].movimientos = "Retiro de $" + std::to_string(retiro);
     std::cout << "Se retir" << char(162) << " $" << retiro << " de su cuenta \n";
     return 1;
 }
@@ -72,9 +77,7 @@ int depositar(int idTarjeta){
     double deposito{};
     std::cin >> deposito;
     tarjeta[idTarjeta].saldo += deposito; //Se suma al saldo el retiro de dinero
-    //transf[idTarjeta] += 1;
-    tarjeta[idTarjeta].movimientos += "Deposito de $" + std::to_string(deposito) + "\n";
-    //std::cout << tarjeta[idTarjeta].movimientos[transf[idTarjeta]] << "\n";
+ //   tarjeta[idTarjeta].movimientos += "Deposito de $" + std::to_string(deposito) + "\n";
     std::cout << "Se deposit"  << char(162) << " $" << deposito << " a su cuenta \n";
     return 0;
 }
@@ -97,13 +100,9 @@ int transferencia(int idTarjeta){
     std::cin >> dinero;
     tarjeta[idTarjeta].saldo -= dinero; //Se retira el dinero de la tarjeta
     tarjeta[id].saldo += dinero; //Se deposita el dinero a la otra tarjeta
-    //transf[idTarjeta] guarda cuantos movimientos se han hecho en la tarjeta que transfiere
     //Para el estado de cuenta
-    transf[idTarjeta] += 1;
-    tarjeta[idTarjeta].movimientos += "Transferenica de $" + std::to_string(dinero) + " a la tarjeta " + cuenta + "\n";
-    //transf[idTarjeta] guarda cuantos movimientos se han hecho en la tarjeta que recibe el dinero
-    //transf[id] += 1; 
-    tarjeta[id].movimientos += "Transferencia de la tarjeta " + tarjeta[idTarjeta].noTarjeta + " de $" + std::to_string(dinero) + "\n";
+    //tarjeta[idTarjeta].movimientos = "Transferencia de $" + std::to_string(dinero) + " a la tarjeta " + cuenta + "\n";
+    //tarjeta[id].movimientos = "Transferencia de la tarjeta " + tarjeta[idTarjeta].noTarjeta + " de $" + std::to_string(dinero) + "\n";
     std::cout << "Se deposit"  << char(162) << " $" << dinero << " a la tarjeta " << cuenta << "\n";
     return 0;
 }
@@ -130,7 +129,6 @@ int cambiarNip(int idTarjeta){
 //• estado de cuenta
 int estadoDeCuenta(int idTarjeta){
     std::cout << tarjeta[idTarjeta].movimientos << "\n";
-
     return 0;
 }
 
