@@ -21,5 +21,6 @@ int main(){
     std::cout << "Operador exponencial";
     double a{std::pow(3.0, 4.0)};
     std::cout << a;
+    
     return 0;
 }
