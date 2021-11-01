@@ -9,12 +9,11 @@ struct datos{
     string nip;
     double saldo;
     string movimientos;
-}tarjeta[3]; // Creo un vector tipo tarjeta
+}tarjeta[4]; // Creo un vector tipo tarjeta
 
-int transf[3] = {0, 0, 0};
 
 //Llenado de datos de las tarjetas
-int llenar(){
+void llenar(){
     tarjeta[1].noTarjeta = "4000123456789010";
     tarjeta[1].nip = "1212";
     tarjeta[1].saldo = 13500;
@@ -22,9 +21,8 @@ int llenar(){
     tarjeta[2].nip ="1209";
     tarjeta[2].saldo = 5400;
     tarjeta[3].noTarjeta = "5415910011090949";
-    tarjeta[3].nip = "0413";
+    tarjeta[3].nip = "0413"; //<- c muere
     tarjeta[3].saldo = 51300;
-    return 0;
 }
 
 //Validar numero de tarjeta, regresa un numero > 3 si es igual, regresa 0 si es distinta
@@ -69,31 +67,35 @@ bool isNumeric(string cadena){
 
 //• retirar         
 int retirar(int idTarjeta){
+    std::cout << "--------------------------------------------------------- \n";
     std::cout << "Cantidad a retirar: ";
     double retiro{};
     std::cin >> retiro;
-    tarjeta[idTarjeta].saldo -= retiro; //Se resta al saldo el retiro de dinero
-    //transf[idTarjeta] += 1;
-    tarjeta[idTarjeta].movimientos += "Retiro de $" + std::to_string(retiro) + "\n";
-    std::cout << "Se retir" << char(162) << " $" << retiro << " de su cuenta \n";
-    return 1;
+    if (tarjeta[idTarjeta].saldo >= retiro){
+        tarjeta[idTarjeta].saldo -= retiro; //Se resta al saldo el retiro de dinero
+        tarjeta[idTarjeta].movimientos += "Retiro de $" + std::to_string(retiro) + "\n";
+        std::cout << "Se retir" << char(162) << " $" << retiro << " de su cuenta \n";
+    } else {
+        std::cout << "Saldo insuficiente para realizar el retiro \n";
+    }
+    return 0;
 }
 
 //• depositar
 int depositar(int idTarjeta){
+    std::cout << "--------------------------------------------------------- \n";
     std::cout << "Cantidad a depositar: ";
     double deposito{};
     std::cin >> deposito;
     tarjeta[idTarjeta].saldo += deposito; //Se suma al saldo el retiro de dinero
-    //transf[idTarjeta] += 1;
     tarjeta[idTarjeta].movimientos += "Deposito de $" + std::to_string(deposito) + "\n";
-    //std::cout << tarjeta[idTarjeta].movimientos[transf[idTarjeta]] << "\n";
     std::cout << "Se deposit"  << char(162) << " $" << deposito << " a su cuenta \n";
     return 0;
 }
 
 //• hacer transferencia
 int transferencia(int idTarjeta){
+    std::cout << "--------------------------------------------------------- \n";
     int id{};
     string cuenta{};
     //Validacion de la tarjeta donde se va a depositar
@@ -108,16 +110,16 @@ int transferencia(int idTarjeta){
     std::cout << "Cantidad a depositar: ";
     int dinero{};
     std::cin >> dinero;
-    tarjeta[idTarjeta].saldo -= dinero; //Se retira el dinero de la tarjeta
-    tarjeta[id].saldo += dinero; //Se deposita el dinero a la otra tarjeta
-    //transf[idTarjeta] guarda cuantos movimientos se han hecho en la tarjeta que transfiere
-    //Para el estado de cuenta
-    transf[idTarjeta] += 1;
-    tarjeta[idTarjeta].movimientos += "Transferenica de $" + std::to_string(dinero) + " a la tarjeta " + cuenta + "\n";
-    //transf[idTarjeta] guarda cuantos movimientos se han hecho en la tarjeta que recibe el dinero
-    //transf[id] += 1; 
-    tarjeta[id].movimientos += "Transferencia de la tarjeta " + tarjeta[idTarjeta].noTarjeta + " de $" + std::to_string(dinero) + "\n";
-    std::cout << "Se deposit"  << char(162) << " $" << dinero << " a la tarjeta " << cuenta << "\n";
+    if (tarjeta[idTarjeta].saldo >= dinero){
+        tarjeta[idTarjeta].saldo -= dinero; //Se retira el dinero de la tarjeta
+        tarjeta[id].saldo += dinero; //Se deposita el dinero a la otra tarjeta
+        //Para el estado de cuenta
+        tarjeta[idTarjeta].movimientos += "Transferenica de $" + std::to_string(dinero) + " a la tarjeta " + cuenta + "\n";
+        tarjeta[id].movimientos += "Transferencia de la tarjeta " + tarjeta[idTarjeta].noTarjeta + " de $" + std::to_string(dinero) + "\n";
+        std::cout << "Se deposit"  << char(162) << " $" << dinero << " a la tarjeta " << cuenta << "\n";
+    } else {
+        std::cout << "Saldo insuficiente para realizar la transferencia \n";
+    }
     return 0;
 }
 
@@ -144,6 +146,7 @@ int cambiarNip(int idTarjeta){
 
 //• estado de cuenta
 int estadoDeCuenta(int idTarjeta){
+    std::cout << "--------------------------------------------------------- \n" << "Estado de cuenta \n";
     std::cout << tarjeta[idTarjeta].movimientos << "\n";
     return 0;
 }
