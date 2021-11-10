@@ -45,6 +45,7 @@ bool validarNip(string nip, int i){ //Int i es el idTarjeta
         return false;
     }  
 }
+
 //Convertir una cadena a mayusculas
 string aMayuscula(string cadena) {
     for (int i = 0; i < cadena.length(); i++){
@@ -87,9 +88,14 @@ int depositar(int idTarjeta){
     std::cout << "Cantidad a depositar: ";
     double deposito{};
     std::cin >> deposito;
-    tarjeta[idTarjeta].saldo += deposito; //Se suma al saldo el retiro de dinero
-    tarjeta[idTarjeta].movimientos += "Deposito de $" + std::to_string(deposito) + "\n";
-    std::cout << "Se deposit"  << char(162) << " $" << deposito << " a su cuenta \n";
+    if (deposito > 0){
+        tarjeta[idTarjeta].saldo += deposito; //Se suma al saldo el retiro de dinero
+        tarjeta[idTarjeta].movimientos += "Deposito de $" + std::to_string(deposito) + "\n";
+        std::cout << "Se deposit"  << char(162) << " $" << deposito << " a su cuenta \n";
+    } else {
+        std::cout << "La cantidad a depositar no es valida \n";
+    }
+    
     return 0;
 }
 
@@ -110,7 +116,7 @@ int transferencia(int idTarjeta){
     std::cout << "Cantidad a depositar: ";
     int dinero{};
     std::cin >> dinero;
-    if (tarjeta[idTarjeta].saldo >= dinero){
+    if ((tarjeta[idTarjeta].saldo >= dinero) && (dinero > 0)){
         tarjeta[idTarjeta].saldo -= dinero; //Se retira el dinero de la tarjeta
         tarjeta[id].saldo += dinero; //Se deposita el dinero a la otra tarjeta
         //Para el estado de cuenta
@@ -118,7 +124,12 @@ int transferencia(int idTarjeta){
         tarjeta[id].movimientos += "Transferencia de la tarjeta " + tarjeta[idTarjeta].noTarjeta + " de $" + std::to_string(dinero) + "\n";
         std::cout << "Se deposit"  << char(162) << " $" << dinero << " a la tarjeta " << cuenta << "\n";
     } else {
-        std::cout << "Saldo insuficiente para realizar la transferencia \n";
+        if (tarjeta[idTarjeta].saldo < dinero){
+            std::cout << "Saldo insuficiente para realizar la transferencia \n";
+        }
+        if (dinero <= 0){
+            std::cout << "La cantidad a depositar no es valida \n";
+        }
     }
     return 0;
 }
@@ -164,25 +175,45 @@ int cajero(){
     string seguir{"SI"};
     string iniciar{""};
     int idTarjeta{};
+    int intentos{3};
     string opcion{""};
     int numOpcion{1}; 
-    //Se valida que el número de tarjeta exista
+    inSesion:
     std::cout << "--------------------------------------------------------- \n";
     std::cout << "Desea iniciar sesion? (SI/NO): ";
     std::cin >> iniciar;
     iniciar = aMayuscula(iniciar);
-    std::cout << "--------------------------------------------------------- \n";
+    if (iniciar != "SI" && iniciar != "NO"){
+        std::cout << "Inserte una respuesta valida \n";
+        goto inSesion;
+    }
     if (iniciar == "SI"){
-        do{
-            std::cout << "Inserte n" << char(163) << "mero de tarjeta: ";
-            std::cin >>  noTarjeta;
-            idTarjeta = validarTarjeta(noTarjeta);
-        } while(idTarjeta == 0);
+        Tar:
+        std::cout << "--------------------------------------------------------- \n";
+        std::cout << "Inserte n" << char(163) << "mero de tarjeta: ";
+        std::cin >>  noTarjeta;
+        //Se valida que el número de tarjeta exista
+        idTarjeta = validarTarjeta(noTarjeta);
+        if (idTarjeta == 0){
+            std::cout << "El numero de tarjeta no existe \n";
+            goto Tar;
+        }
         //Se valida que el nip de la tarjeta sea correcto 
-        do{
+        valNip:
+        std::cout << "--------------------------------------------------------- \n";
+        if (intentos > 0){
             std::cout << "Inserte nip: ";
             std::cin >> nip;
-        } while(validarNip(nip, idTarjeta) == false);
+            if (validarNip(nip, idTarjeta) == false){
+                std::cout << "El pin no es correcto \n";
+                intentos -= 1;
+                std::cout << "Le quedan " << intentos << " intentos \n";
+                goto valNip;
+            }
+        } else {
+            goto terminarCajero;
+        }
+        
         std::cout << "--------------------------------------------------------- \n";
         // Elegir una consulta
         while (numOpcion < 1 and numOpcion > 7 or seguir == "SI"){
@@ -191,13 +222,13 @@ int cajero(){
             std::cout << "3 - Transferencia      4 - Estado de cuenta \n";
             std::cout << "5 - Consultar saldo    6 - Cambiar nip \n";
             std::cout << "7 - Salir \n";
-            do{
+                opc:
                 std::cout << "Elija una opcion: ";
                 std::cin >> opcion;
                 if (isNumeric(opcion) == false){
                     std::cout << "Inserte una opcion valida \n";
+                    goto opc;
                 }
-            } while(isNumeric(opcion) == false);
             //stoi convierte una string a entero
             numOpcion = stoi(opcion);
             switch (numOpcion) {
@@ -225,10 +256,15 @@ int cajero(){
                     goto iniciarCajero;
             }
             if (numOpcion > 0 and numOpcion < 7){
-                std::cout << "--------------------------------------------------------- \n";
-                std::cout << "Desea hacer otra consulta? (SI/NO): ";
-                std::cin >> seguir;
-                seguir = aMayuscula(seguir);
+                    seg:
+                    std::cout << "--------------------------------------------------------- \n";
+                    std::cout << "Desea hacer otra consulta? (SI/NO): ";
+                    std::cin >> seguir;
+                    seguir = aMayuscula(seguir);
+                    if (seguir != "SI" && seguir != "NO"){
+                        std::cout << "Inserte una respuesta valida \n";
+                        goto seg;
+                    }
             }
             if (seguir == "NO"){
                 std::cout << "Se ha cerrado sesion correctamente \n";
@@ -237,6 +273,7 @@ int cajero(){
             std::cout << "--------------------------------------------------------- \n";
         }
     } else {
+        terminarCajero:
         std::cout << "Hasta la proximaaaaaa";
     }
     return 0;
