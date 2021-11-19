@@ -68,25 +68,33 @@ bool isNumeric(string cadena){
 
 //• retirar         
 int retirar(int idTarjeta){
+    int retiro{};
+    ret:
     std::cout << "--------------------------------------------------------- \n";
     std::cout << "Cantidad a retirar: ";
-    double retiro{};
     std::cin >> retiro;
-    if (tarjeta[idTarjeta].saldo >= retiro){
+    if ((tarjeta[idTarjeta].saldo >= retiro) && (retiro%50 == 0)){
         tarjeta[idTarjeta].saldo -= retiro; //Se resta al saldo el retiro de dinero
         tarjeta[idTarjeta].movimientos += "Retiro de $" + std::to_string(retiro) + "\n";
         std::cout << "Se retir" << char(162) << " $" << retiro << " de su cuenta \n";
     } else {
-        std::cout << "Saldo insuficiente para realizar el retiro \n";
+        if (tarjeta[idTarjeta].saldo < retiro){
+            std::cout << "Saldo insuficiente para realizar el retiro \n";
+        }
+        if (retiro%50 != 0){
+            std::cout << "No se puede retirar esa cantidad \n";
+        }
+        goto ret;
     }
     return 0;
 }
 
 //• depositar
 int depositar(int idTarjeta){
+    double deposito{};
+    dep:
     std::cout << "--------------------------------------------------------- \n";
     std::cout << "Cantidad a depositar: ";
-    double deposito{};
     std::cin >> deposito;
     if (deposito > 0){
         tarjeta[idTarjeta].saldo += deposito; //Se suma al saldo el retiro de dinero
@@ -94,6 +102,7 @@ int depositar(int idTarjeta){
         std::cout << "Se deposit"  << char(162) << " $" << deposito << " a su cuenta \n";
     } else {
         std::cout << "La cantidad a depositar no es valida \n";
+        goto dep;
     }
     
     return 0;
@@ -101,9 +110,9 @@ int depositar(int idTarjeta){
 
 //• hacer transferencia
 int transferencia(int idTarjeta){
-    std::cout << "--------------------------------------------------------- \n";
     int id{};
     string cuenta{};
+    std::cout << "--------------------------------------------------------- \n";
     //Validacion de la tarjeta donde se va a depositar
     do{
         std::cout << "Tarjeta a depositar: ";
@@ -113,8 +122,10 @@ int transferencia(int idTarjeta){
             std::cout << "El n" << char(163) << "mero de tarjeta no es valido \n";
         }
     } while(id == 0);
-    std::cout << "Cantidad a depositar: ";
     int dinero{};
+    trans:
+    std::cout << "--------------------------------------------------------- \n";
+    std::cout << "Cantidad a depositar: ";
     std::cin >> dinero;
     if ((tarjeta[idTarjeta].saldo >= dinero) && (dinero > 0)){
         tarjeta[idTarjeta].saldo -= dinero; //Se retira el dinero de la tarjeta
@@ -130,6 +141,7 @@ int transferencia(int idTarjeta){
         if (dinero <= 0){
             std::cout << "La cantidad a depositar no es valida \n";
         }
+        goto trans;
     }
     return 0;
 }
