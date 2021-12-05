@@ -16,12 +16,9 @@ int idCuenta{};
 string cantidad{};
 
 void llenar(){
-    cuentas[1].cuenta = "Grisel";
-    cuentas[1].balance = 20000;
-    cuentas[2].cuenta = "Master";
-    cuentas[2].balance = 1000000;
-    cuentas[3].cuenta = "Yisus Cristo";
-    cuentas[3].balance = 1111111;
+    cuentas[1] = {"Grisel", 20000};
+    cuentas[2] = {"Master", 1000000};
+    cuentas[3] = {"Yisus Cristo", 1111111};
 }
 
 bool isNumeric(string cadena){
@@ -73,7 +70,10 @@ string agg(){
     if(isNumeric(cantidad) == false){
         std::cout << "La cantidad no es valida \n";
         goto cant;
-    } 
+    } else if(stoi(cantidad) <= 0){
+        std::cout << "La cantidad no es valida \n";
+        goto cant;
+    }
     std::cout << "Categoria: ";
     string categoria;
     std::getline(std::cin, categoria);
@@ -126,6 +126,7 @@ int main(){
         account();
     } else if(iniciar == "NO"){
         std::cout << "Hasta la proximaaaaaaa \n";
+        return 0;
     } else {
         std::cout << "Inserte una respuesta valida \n";
         goto inicio;
@@ -135,16 +136,18 @@ int main(){
     opc:
     std::cout << "----------------------------------------------------------------------------\n";
     std::cout << "Balance de la cuenta: $" << cuentas[idCuenta].balance << "\n";
+    std::cout << "Gastos: $" << cuentas[idCuenta].pGastos << "         Ingresos: $" << cuentas[idCuenta].pIngresos << "\n";
     std::cout << "1 - Ver gastos      2 - Ver ingresos \n";
     std::cout << "3 - Agregar gasto   4 - Agregar ingreso \n";
     std::cout << "5 - Salir \n";
     std::cout << "Seleccione una opcion: ";
-    std::getline(std::cin, opcion);
+    std::cin >> opcion;
+    std::cin.ignore(32767, '\n');
     if (isNumeric(opcion) == false){
         std::cout << "Inserte una opcion valida \n";
         goto opc;
-    }
-    int numOpcion{stoi(opcion)};
+    } 
+    int numOpcion {stoi(opcion)};
     switch (numOpcion){
         case 1:
             std::cout << "----------------------------------------------------------------------------\n";
