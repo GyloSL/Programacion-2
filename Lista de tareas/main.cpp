@@ -3,6 +3,7 @@
 #include <iterator>
 #include <fstream>
 
+
 std::string datos[100];
 int cont{};
 int adds{};

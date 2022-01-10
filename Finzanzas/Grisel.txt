@@ -1,0 +1,7 @@
+19600
+Gastos
+170,Cantidad: $170 --- Categoria: Comida --- Fecha: 10/01/2021 --- Comentario: Coca grande y chetos
+500,Cantidad: $500 --- Categoria: Prueba --- Fecha: 10/01/2022 --- Comentario: Prueba 1
+Ingresos
+400,Cantidad: $400 --- Categoria: Prueba --- Fecha: 10/01/2022 --- Comentario: Prueba 2
+100,Cantidad: $100 --- Categoria: prueba --- Fecha: 10/01/2022 --- Comentario: prueba 3
