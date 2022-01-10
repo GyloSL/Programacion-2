@@ -6,7 +6,6 @@
 using std::string;
 
 struct datos{
-    string cuenta;
     double balance;
     double pGastos; 
     double pIngresos;
@@ -49,7 +48,6 @@ void llenar(){
             }
         } 
         while (std::getline(leerArc, linea) && linea != ""){
-            std::cout << linea + "\n";
             cuentas.pIngresos += obtenerCantidad(linea);
             cuentas.ingresos += linea.substr(lenght+1, linea.length()) + "\n";
             addIngreso += linea + "\n";
@@ -58,8 +56,6 @@ void llenar(){
     }
     leerArc.close();
 }
-
-
 
 bool isNumeric(string cadena){
     bool validar{true};
@@ -228,6 +224,13 @@ int main(){
         case 5:
             std::cout << "Abandonanda la cuenteeeee \n";
             escribirTXT();
+            cuentas.balance = 0;
+            cuentas.gastos = "";
+            cuentas.ingresos = "";
+            cuentas.pGastos = 0;
+            cuentas.pIngresos = 0;
+            addGasto = "";
+            addIngreso = "";
             goto inicio;
         default:
             std::cout << "Inserte una opcion valida \n";

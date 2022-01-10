@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 #include <sstream>
+#include <iterator>
+#include <fstream>
 using std::string;
 
 //Estructura de datos para guardar los datos de la tarjeta
@@ -13,16 +15,38 @@ struct datos{
 
 
 //Llenado de datos de las tarjetas
-void llenar(){
-    tarjeta[1].noTarjeta = "4000123456789010";
-    tarjeta[1].nip = "1212";
-    tarjeta[1].saldo = 13500;
-    tarjeta[2].noTarjeta = "5412751234123456";
-    tarjeta[2].nip ="1209";
-    tarjeta[2].saldo = 5400;
-    tarjeta[3].noTarjeta = "5415910011090949";
-    tarjeta[3].nip = "0413"; //<- c muere
-    tarjeta[3].saldo = 51300;
+void llenar(string txt){
+    std::string archivo = txt;
+    std::ifstream leerArc(archivo.c_str());
+    std::string linea;
+    std::getline(leerArc, linea);
+    int idTarjeta{stoi(linea)};
+    std::getline(leerArc, linea);
+    tarjeta[idTarjeta].noTarjeta = linea;
+    std::getline(leerArc, linea);
+    tarjeta[idTarjeta].nip = linea;
+    std::getline(leerArc, linea);
+    tarjeta[idTarjeta].saldo = stod(linea);
+    std::getline(leerArc, linea);
+    while (std::getline(leerArc, linea)) {
+        tarjeta[idTarjeta].movimientos += linea + "\n"; 
+    }
+    leerArc.close();
+}
+
+int escribirTXT(string txt, int id){
+    std::string archivo = txt;
+    std::ofstream escArchivo;
+    escArchivo.open(archivo.c_str(), std::fstream::out);
+    escArchivo.end;
+    escArchivo << id << std::endl;
+    escArchivo << tarjeta[id].noTarjeta << std::endl;
+    escArchivo << tarjeta[id].nip << std::endl;
+    escArchivo << tarjeta[id].saldo << std::endl;
+    escArchivo << "Movimientos" << std::endl;
+    escArchivo << tarjeta[id].movimientos;
+    escArchivo.close();
+    return 0;
 }
 
 //Validar numero de tarjeta, regresa un numero > 3 si es igual, regresa 0 si es distinta
@@ -73,7 +97,7 @@ int retirar(int idTarjeta){
     std::cout << "--------------------------------------------------------- \n";
     std::cout << "Cantidad a retirar: ";
     std::cin >> retiro;
-    if ((tarjeta[idTarjeta].saldo >= retiro) && (retiro%50 == 0)){
+    if ((tarjeta[idTarjeta].saldo >= retiro) && (retiro >= 50) && (retiro%50 == 0)){
         tarjeta[idTarjeta].saldo -= retiro; //Se resta al saldo el retiro de dinero
         tarjeta[idTarjeta].movimientos += "Retiro de $" + std::to_string(retiro) + "\n";
         std::cout << "Se retir" << char(162) << " $" << retiro << " de su cuenta \n";
@@ -91,12 +115,12 @@ int retirar(int idTarjeta){
 
 //• depositar
 int depositar(int idTarjeta){
-    double deposito{};
+    int deposito{};
     dep:
     std::cout << "--------------------------------------------------------- \n";
     std::cout << "Cantidad a depositar: ";
     std::cin >> deposito;
-    if (deposito > 0){
+    if ((deposito >= 50) && (deposito%50 == 0)){
         tarjeta[idTarjeta].saldo += deposito; //Se suma al saldo el retiro de dinero
         tarjeta[idTarjeta].movimientos += "Deposito de $" + std::to_string(deposito) + "\n";
         std::cout << "Se deposit"  << char(162) << " $" << deposito << " a su cuenta \n";
@@ -127,7 +151,7 @@ int transferencia(int idTarjeta){
     std::cout << "--------------------------------------------------------- \n";
     std::cout << "Cantidad a depositar: ";
     std::cin >> dinero;
-    if ((tarjeta[idTarjeta].saldo >= dinero) && (dinero > 0)){
+    if ((tarjeta[idTarjeta].saldo >= dinero) && (dinero >= 50) && (dinero%50 == 0)){
         tarjeta[idTarjeta].saldo -= dinero; //Se retira el dinero de la tarjeta
         tarjeta[id].saldo += dinero; //Se deposita el dinero a la otra tarjeta
         //Para el estado de cuenta
@@ -138,7 +162,7 @@ int transferencia(int idTarjeta){
         if (tarjeta[idTarjeta].saldo < dinero){
             std::cout << "Saldo insuficiente para realizar la transferencia \n";
         }
-        if (dinero <= 0){
+        if (dinero < 50 || dinero%50 != 0){
             std::cout << "La cantidad a depositar no es valida \n";
         }
         goto trans;
@@ -217,7 +241,7 @@ int cajero(){
             std::cout << "Inserte nip: ";
             std::cin >> nip;
             if (validarNip(nip, idTarjeta) == false){
-                std::cout << "El pin no es correcto \n";
+                std::cout << "El nip no es correcto \n";
                 intentos -= 1;
                 std::cout << "Le quedan " << intentos << " intentos \n";
                 goto valNip;
@@ -292,7 +316,12 @@ int cajero(){
 }
 
 int main(){
-    llenar();
+    llenar("4000123456789010.txt");
+    llenar("5412751234123456.txt");
+    llenar("5415910011090949.txt");
     cajero();
+    escribirTXT("4000123456789010.txt", 1);
+    escribirTXT("5412751234123456.txt", 2);
+    escribirTXT("5415910011090949.txt", 3);
     return 0;
 }
